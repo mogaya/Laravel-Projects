@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -34,6 +35,10 @@ class PostController extends Controller
 
     public function showCreateForm()
     {
+        // using Middleware instead of
+        // if (!auth()->check()) {
+        //     return redirect('/');
+        // }
         return view('create-post');
     }
 }
