@@ -10,8 +10,24 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     //
+    public function delete(Post $post)
+    {
+        if (auth()->user()->cannot('delete', $post)) {
+            return 'You cannot do that';
+        }
+        $post->delete();
+
+        return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted');
+    }
+
     public function viewSinglePost(Post $post)
     {
+        /***This piece of code is replaced by policy ***/
+        // if ($post->user_id === auth()->user()->id) {
+        //     return 'you are the author';
+        // }
+        // return 'you are not the author';
+
         $post['body'] = strip_tags(Str::markdown($post->body), '<p><ul><li><strong><em><h3><h1><h2><br>');
         return view('single-post', ['post' => $post]);
     }
