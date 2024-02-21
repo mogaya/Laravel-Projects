@@ -6,8 +6,21 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+use function Laravel\Prompts\text;
+
 class userController extends Controller
 {
+    public function storeAvatar(Request $request)
+    {
+        $request->file('avatar')->store('public/avatars');
+        return 'Hello';
+    }
+
+    public function showAvatarForm()
+    {
+        return view('avatar-form');
+    }
+
     public function profile(User $user)
     {
         return view('profile-posts', ['username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
