@@ -30,7 +30,7 @@ Route::post('/register', [userController::class, "register"])->middleware('guest
 Route::post('/login', [userController::class, "login"])->middleware('guest');
 Route::post('/logout', [userController::class, "logout"])->middleware('mustBeLoggedIn');
 Route::get('/manage-avatar', [userController::class, 'showAvatarForm'])->middleware('mustBeLoggedIn');
-Route::post('/manage-avatar', [userController::class, 'storeAvatar']);
+Route::post('/manage-avatar', [userController::class, 'storeAvatar'])->middleware('mustBeLoggedIn');
 
 //Post Related Routes
 Route::get('/create-post', [PostController::class, "showCreateForm"])->middleware('mustBeLoggedIn');

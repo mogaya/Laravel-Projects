@@ -3,17 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
+use Illuminate\Http\Request;
+
+use Illuminate\Validation\Rule;
 use function Laravel\Prompts\text;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class userController extends Controller
 {
     public function storeAvatar(Request $request)
     {
-        $request->file('avatar')->store('public/avatars');
-        return 'Hello';
+        $request->validate([
+            'avatar' => 'required|image|max:3000'
+        ]);
+        // $request->file('avatar')->store('public/avatars');
+        // $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
+        // Storage::put('public/examplefolder/cool.jpg', $imgData);
+        // create image manager with desired driver
+        $manager = new ImageManager(new Driver());
+
+        // read image from file system
+        $image = $manager->read($request->file('avatar'));
+
+        // resize image proportionally to 300px width
+        $image->scale(width: 120);
+
+        // insert watermark
+        // $image->place('images/watermark.png');
+
+        // save modified image in new format 
+        $image->toJpg()->save('storage\avatars\avatarcool.jpg');
     }
 
     public function showAvatarForm()
