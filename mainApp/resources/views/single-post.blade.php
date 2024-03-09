@@ -15,7 +15,11 @@
         </div>
   
         <p class="text-muted small mb-4">
-          <a href="#"><img class="avatar-tiny" src="https://gravatar.com/avatar/f64fc44c03a8a7eb1d52502950879659?s=128" /></a>
+          {{-- mogaya's way --}}
+          {{-- <a href="#"><img class="avatar-tiny" src="/storage/avatars/{{auth()->user()->avatar}}" /></a> --}}
+
+          {{-- Brad's way --}}
+          <a href="#"><img class="avatar-tiny" src="{{$post->user->avatar}}" /></a>
           Posted by <a href="#">{{$post->user->username}}</a> on {{$post->created_at->format('j/n/Y')}}
         </p>
   

@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 use Illuminate\Validation\Rule;
-use function Laravel\Prompts\text;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -19,23 +18,35 @@ class userController extends Controller
         $request->validate([
             'avatar' => 'required|image|max:3000'
         ]);
-        // $request->file('avatar')->store('public/avatars');
-        // $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
-        // Storage::put('public/examplefolder/cool.jpg', $imgData);
+
+        $user = auth()->user();
+
+        $filename = $user->id . "-" . uniqid() . ".jpg";
+
         // create image manager with desired driver
         $manager = new ImageManager(new Driver());
 
         // read image from file system
-        $image = $manager->read($request->file('avatar'));
+        $image = $manager->read($request->file("avatar"));
+        $imgData = $image->cover(120, 120)->toJpeg();
+        Storage::put("public/avatars/" . $filename, $imgData);
+
+        $oldAvatar = $user->avatar;
+
+        $user->avatar = $filename;
+        $user->save();
+
+        if ($oldAvatar != "/fallback-avatar.jpg") {
+            Storage::delete(str_replace("/storage/", "public/", $oldAvatar));
+        }
+
+        return back()->with("success", "Yaaay you have a new avatar");
 
         // resize image proportionally to 300px width
-        $image->scale(width: 120);
-
-        // insert watermark
-        // $image->place('images/watermark.png');
+        // $image->scale(width: 120);
 
         // save modified image in new format 
-        $image->toJpg()->save('storage\avatars\avatarcool.jpg');
+        // $image->toJpg()->save('storage\avatars\avatarcool.jpg');
     }
 
     public function showAvatarForm()
@@ -45,7 +56,7 @@ class userController extends Controller
 
     public function profile(User $user)
     {
-        return view('profile-posts', ['username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
+        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
     }
 
     public function logout()
