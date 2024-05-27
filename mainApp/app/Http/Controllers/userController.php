@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\User;
 
-use Illuminate\Http\Request;
+use App\Models\Follow;
 
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 
 class userController extends Controller
@@ -41,12 +43,6 @@ class userController extends Controller
         }
 
         return back()->with("success", "Yaaay you have a new avatar");
-
-        // resize image proportionally to 300px width
-        // $image->scale(width: 120);
-
-        // save modified image in new format 
-        // $image->toJpg()->save('storage\avatars\avatarcool.jpg');
     }
 
     public function showAvatarForm()
@@ -56,7 +52,13 @@ class userController extends Controller
 
     public function profile(User $user)
     {
-        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
+        $currentlyFollowing = 0;
+
+        if (auth()->check()) {
+            $currentlyFollowing = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
+        }
+
+        return view('profile-posts', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
     }
 
     public function logout()
