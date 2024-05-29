@@ -47,3 +47,5 @@ Route::put('/post/{post}', [PostController::class, 'actuallyUpdate'])->middlewar
 
 //Profile related routes
 Route::get('/profile/{user:username}', [userController::class, "profile"]);
+Route::get('/profile/{user:username}/followers', [userController::class, "profileFollowers"]);
+Route::get('/profile/{user:username}/following', [userController::class, "profileFollowing"]);
