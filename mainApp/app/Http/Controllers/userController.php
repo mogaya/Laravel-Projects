@@ -68,21 +68,28 @@ class userController extends Controller
         return view('profile-posts', ['post' => $user->posts()->latest()->get()]);
     }
 
-<<<<<<< HEAD
     public function profileFollowers(User $user)
     {
-        $this->getSharedData($user);
-        return view('profile-followers', ['post' => $user->posts()->latest()->get()]);
+        $currentlyFollowing = 0;
+
+        if (auth()->check()) {
+            $currentlyFollowing = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
+        }
+
+        return view('profile-followers', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
     }
 
     public function profileFollowing(User $user)
     {
-        $this->getSharedData($user);
-        return view('profile-following', ['post' => $user->posts()->latest()->get()]);
+        $currentlyFollowing = 0;
+
+        if (auth()->check()) {
+            $currentlyFollowing = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
+        }
+
+        return view('profile-following', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'post' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
     }
 
-=======
->>>>>>> parent of a010319 (Profile Pages p1)
     public function logout()
     {
         auth()->logout();
