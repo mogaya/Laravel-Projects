@@ -68,6 +68,7 @@ class userController extends Controller
         return view('profile-posts', ['post' => $user->posts()->latest()->get()]);
     }
 
+<<<<<<< HEAD
     public function profileFollowers(User $user)
     {
         $this->getSharedData($user);
@@ -80,6 +81,8 @@ class userController extends Controller
         return view('profile-following', ['post' => $user->posts()->latest()->get()]);
     }
 
+=======
+>>>>>>> parent of a010319 (Profile Pages p1)
     public function logout()
     {
         auth()->logout();
